@@ -13,7 +13,7 @@ function usage(){
 
 
 # for testing: create a disk image and mount as loopback device
-loop_setup(){    
+function loop_setup(){
     LOOPIMG="/tmp/mister.img" # final SD card image
 
     msg "creating fake disk image for loopback device"
@@ -24,7 +24,8 @@ loop_setup(){
     losetup
 }
 
-loop_teardown(){
+
+function loop_teardown(){
     msg "detaching loopback device (image saved at: $LOOPIMG)"
     losetup -d $BLKDEV
 }
@@ -62,7 +63,10 @@ msg "creating exFAT and U-Boot SPL partitions"
 SDSIZE=$((`sfdisk -s $BLKDEV` / 1024))
 FATSIZE=$((SDSIZE - 3))
 UBOOTSTART=$(($SDSIZE - 2))
-echo -e "1M,${FATSIZE}M,7\n${UBOOTSTART}M,1M,a2" | sfdisk $BLKDEV
+sfdisk $BLKDEV <<EOF
+1M,${FATSIZE}M,7
+${UBOOTSTART}M,1M,a2
+EOF
 partprobe $BLKDEV
 
 msg "formatting exFAT partition"
