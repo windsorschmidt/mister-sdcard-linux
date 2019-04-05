@@ -78,6 +78,7 @@ BLKDEV=$2 # target block device that ---WILL BE OVERWRITTEN!!!---
 FILESDIR="files" # expect to find archive contents here
 UBOOTIMG="files/linux/uboot.img" # U-Boot bootloader image
 EXTRADIR="extra" # optional; contents copied to SD card root (e.g. cores)
+UPDATESCRIPT="https://github.com/MiSTer-devel/Updater_script_MiSTer/raw/master/update.sh"
 
 #loop_setup
 
@@ -109,7 +110,7 @@ unrar x -y -x*.exe $RELARCH
 
 msg "adding update script"
 mkdir -p "$FILESDIR/#Scripts"
-curl -L https://github.com/MiSTer-devel/Updater_script_MiSTer/raw/master/update.sh >"$FILESDIR/#Scripts/update.sh"
+curl -L $UPDATESCRIPT >"$FILESDIR/#Scripts/update.sh"
 
 if [[ -d $EXTRADIR ]]; then
   msg "copying extra files"
