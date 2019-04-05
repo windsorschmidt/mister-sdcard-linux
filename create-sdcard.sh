@@ -1,4 +1,5 @@
 #!/bin/sh
+set -euo pipefail
 
 RELARCH=$1 # MiSTer release archive
 BLKDEV=$2 # target block device that ---WILL BE OVERWRITTEN!!!---
@@ -25,7 +26,18 @@ loop_teardown(){
     losetup -d $BLKDEV
 }
 
+
+function error_cleanup() {
+  msg "Cleaning up failed run"
+  if [[ -d $FILESDIR ]]; then
+    mountpoint $FILESDIR &>/dev/null && umount -f $FILESDIR
+    rmdir $FILESDIR
+  fi
+}
+
 #loop_setup
+
+trap error_cleanup ERR
 
 msg "creating exFAT and U-Boot SPL partitions"
 # use the entire disk:
@@ -54,7 +66,7 @@ dd if=$UBOOTIMG of=${BLKDEV}p2
 
 msg "unmounting exFAT partition (may take a minute)"
 umount $FILESDIR
-rm -rf $FILESDIR
+rmdir $FILESDIR
 
 #loop_teardown
 
