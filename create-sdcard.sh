@@ -51,7 +51,7 @@ function check_perm() {
 
 
 function check_software() {
-  for prog in unrar sfdisk partprobe; do
+  for prog in unrar sfdisk partprobe curl; do
     command -v ${prog} > /dev/null 2>&1 || (msg "Executable '${prog}' not found in PATH."; exit 1)
   done
 }
@@ -106,6 +106,10 @@ mount ${BLKDEV}p1 $FILESDIR
 
 msg "unpacking MiSTer release archive"
 unrar x -y -x*.exe $RELARCH
+
+msg "adding update script"
+mkdir -p "$FILESDIR/#Scripts"
+curl -L https://github.com/MiSTer-devel/Updater_script_MiSTer/raw/master/update.sh >"$FILESDIR/#Scripts/update.sh"
 
 if [[ -d $EXTRADIR ]]; then
   msg "copying extra files"
