@@ -1,13 +1,16 @@
 #!/bin/sh
 set -euo pipefail
 
-RELARCH=$1 # MiSTer release archive
-BLKDEV=$2 # target block device that ---WILL BE OVERWRITTEN!!!---
-FILESDIR="files" # expect to find archive contents here
-UBOOTIMG="files/linux/uboot.img" # U-Boot bootloader image
-EXTRADIR="extra" # optional; contents copied to SD card root (e.g. cores)
 
-msg(){ echo "$(tput setaf 2)--- $1$(tput sgr0)"; }
+function usage(){
+  echo """$0 - MiSTer SD Creator
+    Full Documentation at https://github.com/windsorschmidt/mister-sdcard-linux
+    $0 <mister-archive> <target-device>
+  """
+  exit 1
+}
+
+
 
 # for testing: create a disk image and mount as loopback device
 loop_setup(){    
@@ -34,6 +37,20 @@ function error_cleanup() {
     rmdir $FILESDIR
   fi
 }
+
+##
+# Main Logic
+##
+
+if [[ $# -ne 2 ]]; then
+  usage
+fi
+
+RELARCH=$1 # MiSTer release archive
+BLKDEV=$2 # target block device that ---WILL BE OVERWRITTEN!!!---
+FILESDIR="files" # expect to find archive contents here
+UBOOTIMG="files/linux/uboot.img" # U-Boot bootloader image
+EXTRADIR="extra" # optional; contents copied to SD card root (e.g. cores)
 
 #loop_setup
 
