@@ -107,8 +107,10 @@ mount ${BLKDEV}p1 $FILESDIR
 msg "unpacking MiSTer release archive"
 unrar x -y -x*.exe $RELARCH
 
-msg "copying extra files"
-cp -Rfv $EXTRADIR/* $FILESDIR
+if [[ -d $EXTRADIR ]]; then
+  msg "copying extra files"
+  cp -Rfv $EXTRADIR/* $FILESDIR
+fi
 
 msg "copying U-Boot to bootloader partition"
 dd if=$UBOOTIMG of=${BLKDEV}p2
