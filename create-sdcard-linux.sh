@@ -165,8 +165,8 @@ msg "copying U-Boot to bootloader partition"
 dd if=$UBOOTIMG of=${BLKDEV}p2
 
 msg "unmounting exFAT partition (may take a minute)"
-umount $FILESDIR
-rmdir $FILESDIR
+umount -v $FILESDIR
+rmdir -v $FILESDIR
 
 #loop_teardown
 
