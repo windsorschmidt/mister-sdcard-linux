@@ -70,7 +70,7 @@ EOF
 partprobe $BLKDEV
 
 msg "formatting exFAT partition"
-mkfs.exfat ${BLKDEV}p1
+mkfs.exfat -n "MiSTer_Data" ${BLKDEV}p1
 
 msg "mounting exFAT partition"
 mkdir -p $FILESDIR
