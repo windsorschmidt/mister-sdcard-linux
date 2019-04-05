@@ -11,6 +11,16 @@ function usage(){
 }
 
 
+function msg(){
+  echo "$(tput setaf 2)--- $1$(tput sgr0)"
+}
+
+
+function err(){
+  echo "$(tput setaf 1)--- $1$(tput sgr0)"
+  exit $2
+}
+
 
 # for testing: create a disk image and mount as loopback device
 function loop_setup(){
@@ -28,6 +38,22 @@ function loop_setup(){
 function loop_teardown(){
     msg "detaching loopback device (image saved at: $LOOPIMG)"
     losetup -d $BLKDEV
+}
+
+
+function check_perm() {
+  [[ $EUID -eq 0 ]] || err "Root privileges will be needed" 1
+  [[ -b $BLKDEV ]] || err "'$BLKDEV' is not a block device. Something is wrong?!?!" 1
+  [[ -r $RELARCH ]] || err "Cannot access '$RELARCH'. Check file location and permissions." 1
+  [[ -w . ]] || err "Working directory '.' needs write permissions." 1
+  [[ ! -e $FILESDIR ]] || err "Temporary directory '$FILESDIR' exists. Please move/remove." 1
+}
+
+
+function check_software() {
+  for prog in unrar sfdisk partprobe; do
+    command -v ${prog} > /dev/null 2>&1 || (msg "Executable '${prog}' not found in PATH."; exit 1)
+  done
 }
 
 
@@ -55,6 +81,8 @@ EXTRADIR="extra" # optional; contents copied to SD card root (e.g. cores)
 
 #loop_setup
 
+check_perm
+check_software
 trap error_cleanup ERR
 
 msg "creating exFAT and U-Boot SPL partitions"
