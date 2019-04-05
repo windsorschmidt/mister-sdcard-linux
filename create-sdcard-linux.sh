@@ -1,11 +1,55 @@
 #!/bin/sh
+#
+# create-sdcard-linux.sh
+#
+# A Linux shell script to prepare an SD card for use with MiSTer. Based on
+# https://github.com/alanswx/SD-installer_MiSTer
+#
+# MIT License
+#
+# Copyright (c) 2019 Windsor Schmidt
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 set -euo pipefail
 
 
 function usage(){
   echo """$0 - MiSTer SD Creator
-    Full Documentation at https://github.com/windsorschmidt/mister-sdcard-linux
     $0 <mister-archive> <target-device>
+
+    Where \`<mister-archive>\` is a release archive from the MiSTer repository
+    (https://github.com/MiSTer-devel/SD-Installer-Win64_MiSTer), and 
+    \`<target-device>\` is the name of the SD card block device.
+
+    This script will **DESTROY** the contents of the block device passed to it;
+    it does **not** check or confirm the device name you choose. Be careful.
+    Must be run as root.
+
+    Script requires exfat-utils and unrar.
+
+    Example:
+      sudo ./$0 release_20190302.rar /dev/mmcblk0
+
+    Note:
+      Please wait until the script completes before removing the card, as
+      flushing the disk cache may take some time.
   """
   exit 1
 }
