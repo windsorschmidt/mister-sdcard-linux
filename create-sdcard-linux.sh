@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # create-sdcard-linux.sh
 #
@@ -109,6 +109,7 @@ function error_cleanup() {
   fi
 }
 
+
 ##
 # Main Logic
 ##
@@ -140,14 +141,16 @@ sfdisk $BLKDEV <<EOF
 1M,${FATSIZE}M,7
 ${UBOOTSTART}M,1M,a2
 EOF
-partprobe $BLKDEV
+partprobe -s $BLKDEV
+FATPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | head -1)"
+UBOOTPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | tail -1)"
 
 msg "formatting exFAT partition"
-mkfs.exfat -n "MiSTer_Data" ${BLKDEV}p1
+mkfs.exfat -n "MiSTer_Data" $FATPART
 
 msg "mounting exFAT partition"
 mkdir -p $FILESDIR
-mount ${BLKDEV}p1 $FILESDIR
+mount $FATPART $FILESDIR
 
 msg "unpacking MiSTer release archive"
 unrar x -y -x*.exe $RELARCH
@@ -162,7 +165,7 @@ if [[ -d $EXTRADIR ]]; then
 fi
 
 msg "copying U-Boot to bootloader partition"
-dd if=$UBOOTIMG of=${BLKDEV}p2
+dd if=$UBOOTIMG of=$UBOOTPART
 
 msg "unmounting exFAT partition (may take a minute)"
 umount -v $FILESDIR
