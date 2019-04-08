@@ -142,8 +142,13 @@ sfdisk $BLKDEV <<EOF
 ${UBOOTSTART}M,1M,a2
 EOF
 partprobe -s $BLKDEV
-FATPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | head -1)"
-UBOOTPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | tail -1)"
+for i in 1 2 3 4 5; do
+  FATPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | head -1)"
+  UBOOTPART="/dev/$(lsblk -nro NAME $BLKDEV | sed 1d | tail -1)"
+  [[ $FATPART != "/dev/" && $UBOOTPART != "/dev/" ]] && break
+  [[ $i -eq 5 ]] && err "Could not detect partitions on SD card" 2
+  sleep 3
+done
 
 msg "formatting exFAT partition"
 mkfs.exfat -n "MiSTer_Data" $FATPART
