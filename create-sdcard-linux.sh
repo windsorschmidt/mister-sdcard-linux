@@ -161,8 +161,8 @@ msg "unpacking MiSTer release archive"
 unrar x -y -x*.exe $RELARCH
 
 msg "adding update script"
-mkdir -p "$FILESDIR/#Scripts"
-curl -L $UPDATESCRIPT >"$FILESDIR/#Scripts/update.sh"
+mkdir -p "$FILESDIR/Scripts"
+curl -L $UPDATESCRIPT >"$FILESDIR/Scripts/update.sh"
 
 if [[ -d $EXTRADIR ]]; then
   msg "copying extra files"
